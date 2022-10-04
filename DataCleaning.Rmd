@@ -63,7 +63,7 @@ dat_obe <- dat_obe[dat_obe$QuestionID == "NPAW2_3",]
 dat_obe <- dat_obe[complete.cases(dat_obe[,c("DataValue")]),]
 dat_obe <- dat_obe[order(dat_obe$YearStart, decreasing = FALSE),]
 ```
-
+ 
 Overarching data: 
 High school completion among women aged 18-44 years: OVC2_2
 Self-rated health status among women aged 18-44 years: OVC6_2
