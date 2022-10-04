@@ -6,5 +6,38 @@ output: html_document
 
 ```{r pressure, echo=FALSE}
 library(rstudioapi)
+library(tidyverse)
+library(gam)
+library(splines)
+library(splines2)  
+library("haven")
+library(dplyr)
+library(tidyr)
+library(broom)
+library(biglm)
+library(dslabs)
+library(ggplot2)
+library(ggthemes)
+library(ggrepel)
 dat_asthma = read.csv("CDI_Asthma.csv")
+dat_smk = read.csv("CDI_Tobacco.csv")
+dat_alc = read.csv("CDI_Alcohol.csv")
+dat_obe = read.csv("CDI_Obesity.csv")
+dat_prox = read.csv("CDI_Overarching.csv")
 ```
+
+#### Choosing target group
+Choose target group to be "women aged 18-44 years" for age and gender restricted data
+
+```{r}
+#clean asthma data to restrict target group
+dat_asthma <- dat_asthma[dat_asthma$QuestionID == "AST1_2",]
+#drop missing values for crude rate
+dat_asthma <- dat_asthma[complete.cases(dat_asthma[,c("DataValue")]),]
+#sort dataframe by year
+dat_asthma <- dat_asthma[order(dat_asthma$YearStart, decreasing = FALSE),]
+```
+
+
+
+
