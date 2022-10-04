@@ -28,7 +28,7 @@ dat_prox = read.csv("CDI_Overarching.csv")
 
 #### Choosing target group
 Choose target group to be "women aged 18-44 years" for age and gender restricted data
-
+Crude prevalence
 ```{r}
 #clean asthma data to restrict target group
 dat_asthma <- dat_asthma[dat_asthma$QuestionID == "AST1_2",]
@@ -38,6 +38,41 @@ dat_asthma <- dat_asthma[complete.cases(dat_asthma[,c("DataValue")]),]
 dat_asthma <- dat_asthma[order(dat_asthma$YearStart, decreasing = FALSE),]
 ```
 
+Tobacco data: Current cigarette smoking among women aged 18-44 years
+crude prevalence
+```{r}
+#clean Tobacco data
+dat_smk <- dat_smk[dat_smk$QuestionID == "TOB1_3",]
+dat_smk <- dat_smk[complete.cases(dat_smk[,c("DataValue")]),]
+dat_smk <- dat_smk[order(dat_smk$YearStart, decreasing = FALSE),]
+```
+
+Alcohol data: 
+Heavy drinking among women aged 18-44 years: QuestionID = ALC5_2
+Binge drinking prevalence among women aged 18-44 years: QuestionID = ALC2_3
+```{r}
+dat_alc <- filter(dat_alc, dat_alc$QuestionID %in% c("ALC5_2", "ALC2_3"))
+dat_alc <- dat_alc[complete.cases(dat_alc[,c("DataValue")]),]
+dat_alc <- dat_alc[order(dat_alc$YearStart, decreasing = FALSE),]
+```
+
+Obesity data: Overweight or obesity among women aged 18-44 years
+Crude prevalence
+```{r}
+dat_obe <- dat_obe[dat_obe$QuestionID == "NPAW2_3",]
+dat_obe <- dat_obe[complete.cases(dat_obe[,c("DataValue")]),]
+dat_obe <- dat_obe[order(dat_obe$YearStart, decreasing = FALSE),]
+```
+
+Overarching data: 
+High school completion among women aged 18-44 years: OVC2_2
+Self-rated health status among women aged 18-44 years: OVC6_2
+Current health care coverage among women aged 18-44 years: OVC1_2
+```{r}
+dat_prox <- filter(dat_prox, dat_prox$QuestionID %in% c("OVC2_2", "OVC6_2","OVC1_2"))
+dat_prox <- dat_prox[complete.cases(dat_prox[,c("DataValue")]),]
+dat_prox <- dat_prox[order(dat_prox$YearStart, decreasing = FALSE),]
+```
 
 
 
