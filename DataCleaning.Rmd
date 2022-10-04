@@ -1,0 +1,10 @@
+---
+title: "BST210_DataCleaning"
+date: "2022-10-04"
+output: html_document
+---
+
+```{r pressure, echo=FALSE}
+library(rstudioapi)
+dat_asthma = read.csv("CDI_Asthma.csv")
+```
