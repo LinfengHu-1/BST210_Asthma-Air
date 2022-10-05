@@ -17,18 +17,12 @@ library(dslabs)
 library(ggplot2)
 library(ggthemes)
 library(ggrepel)
-#<<<<<<< HEAD
 library(data.table)
-dat_asthma = read.csv("CDI_Asthma.csv")
-dat_smk = read.csv("CDI_Tobacco.csv")
-dat_alc = read.csv("CDI_Alcohol.csv")
-dat_obe = read.csv("CDI_Obesity.csv")
-dat_prox = read.csv("CDI_Overarching.csv")
-#--------------=======
-#>>>>>>> aac3615087f90365cebdcffeaa02ac77b7ef9bc9
 ```
 
-#### Clean CDI data from 2011-2020
+## Data Cleaning
+
+#### CDI data 
 Choose target group to be "women aged 18-44 years" for age and gender restricted data
 Crude prevalence
 ```{r}
@@ -77,7 +71,7 @@ dat_mergeCDI <- dat_mergeCDI[order(dat_mergeCDI$YearStart, decreasing = FALSE),]
 ```
 
 
-
+#### Air pollutant data
 Clean Daily Summary data to obtain annual average by state from 2011 to 2019 (Ozone, SO2, CO, NO2)
 ```{r}
 #exposure variables defined as percentage of AQI days with co, no2, o3, pm2.5, pm10 as primary pollutants
@@ -226,6 +220,8 @@ dat_exp <- dat_exp %>% filter(year != 2020) %>% left_join(st_crosswalk, by = c("
 
 
 ```
+
+#### Socioeconomic data
 
 ```{r}
 # data cleaning for socio economic factors

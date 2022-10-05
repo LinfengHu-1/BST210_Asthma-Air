@@ -1,3 +1,4 @@
 *.csv filter=lfs diff=lfs merge=lfs -text
 exposure_data/*.csv filter=lfs diff=lfs merge=lfs -text
 exposure_data/*.zip filter=lfs diff=lfs merge=lfs -text
+CDI_asthma.csv filter=lfs diff=lfs merge=lfs -text
