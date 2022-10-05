@@ -74,5 +74,46 @@ dat_prox <- dat_prox[complete.cases(dat_prox[,c("DataValue")]),]
 dat_prox <- dat_prox[order(dat_prox$YearStart, decreasing = FALSE),]
 ```
 
+Clean AQI data to obtain annual average by state from 2011 to 2019
+```{r}
+#read in annual aqi file
+file_aqi <- list.files(pattern="annual_aqi_by_county_")
+
+dat_aqi_tibble <- lapply(file_aqi, read.csv)
+
+# import population data of women between 18 and 44 by county
+file_pop <- list.files(path = "./acs_age_sex", pattern = "-Data.csv", full.names = T)
+dat_pop_county <- lapply(file_pop, read.csv) %>% map(.%>% filter(!row_number() == 1) %>% 
+  select(GEO_ID, NAME, S0101_C03_023E,S0101_C03_021E,S0101_C01_001E, S0101_C03_001E) %>% 
+  rename(.,female15.44 = S0101_C03_023E, female15.17 = S0101_C03_021E, county.pop = S0101_C01_001E, county.female = S0101_C03_001E))
 
 
+test <- dat_pop_county[[1]] %>% filter(!row_number() == 1) %>% 
+  select(GEO_ID, NAME, S0101_C03_023E,S0101_C03_021E,S0101_C01_001E, S0101_C03_001E) %>% 
+  rename(.,female15.44 = S0101_C03_023E, female15.17 = S0101_C03_021E, county.pop = S0101_C01_001E, county.female = S0101_C03_001E)
+  
+#S0101_C03_023E female 15-44, S0101_C03_021E female 15-17, S0101_C01_001E county total population, S0101_C03_001E county female total population
+
+#create function to find the annual average of co, no2, o3, pm2.5, pm10 exposure by state
+#exposure variables defined as percentage of AQI days with co, no2, o3, pm2.5, pm10 as primary pollutants
+#have checked that Days with AQI equals sum of days with CO, NO2, O3, PM2.5, PM10
+find.state.annual.avg <- function(x) {
+  annual.mean <- x %>% group_by(State) %>% mutate(
+    co = Days.CO / Days.with.AQI,
+    no2 = Days.NO2 / Days.with.AQI,
+    o3 = Days.Ozone / Days.with.AQI,
+    pm2.5 = Days.PM2.5 / Days.with.AQI,
+    pm10 = Days.PM10 / Days.with.AQI) %>% summarise(co_mean = mean(co),
+                                                    no2_mean = mean(no2),
+                                                    o3_mean = mean(o3),
+                                                    pm2.5_mean = mean(pm2.5),
+                                                    pm10_mean = mean(pm10)) # %>%  
+#    select(State, Year, co_mean, no2_mean, o3_mean, pm2.5_mean,pm10_mean)
+  return(annual.mean)
+}
+
+test <- dat_aqi_tibble[[1]]
+
+dat_aqi <- lapply(dat_aqi_tibble, find.state.annual.avg)
+
+````
