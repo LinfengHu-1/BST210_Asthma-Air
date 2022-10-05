@@ -19,36 +19,52 @@ library(ggthemes)
 library(ggrepel)
 ```
 
-#### Choosing target group
-Clean CDI data
+#### Clean CDI data from 2011-2020
 Choose target group to be "women aged 18-44 years" for age and gender restricted data
 Crude prevalence
 ```{r}
 #Asthma prevalence among women aged 18-44 years
-dat_asthma <- read.csv("CDI_Asthma.csv") |> filter(QuestionID=="AST1_2")
-#drop missing values for crude rate
-#####dat_asthma <- drop_na(dat_asthma, DataValue)
-#sort dataframe by year
-#####dat_asthma <- dat_asthma[order(dat_asthma$YearStart, decreasing = FALSE),]
+dat_asthma <- read.csv("CDI_Asthma.csv") |> filter(QuestionID=="AST1_2", StratificationID1 == "OVR")
 
 #Current cigarette smoking among women aged 18-44 years - Crude Prevalence
-dat_smk <- read.csv("CDI_Tobacco.csv")|> filter(QuestionID == "TOB1_3")
-dat_smk <- dat_smk[order(dat_smk$YearStart, decreasing = FALSE),]
+dat_smk <- read.csv("CDI_Tobacco.csv")|> filter(QuestionID == "TOB1_3", StratificationID1 == "OVR")
 
 #Heavy drinking among women aged 18-44 years: QuestionID = ALC5_2
-dat_heavyDrink <- read.csv("CDI_Alcohol.csv") |> filter(QuestionID == "ALC5_2")
+dat_heavyDrink <- read.csv("CDI_Alcohol.csv") |> filter(QuestionID == "ALC5_2", StratificationID1 == "OVR")
 #Binge drinking prevalence among women aged 18-44 years: QuestionID = ALC2_3
-dat_bingeDrink <- read.csv("CDI_Alcohol.csv") |> filter(QuestionID == "ALC2_3")
+dat_bingeDrink <- read.csv("CDI_Alcohol.csv") |> filter(QuestionID == "ALC2_3", StratificationID1 == "OVR")
 
 #Obesity data: Overweight or obesity among women aged 18-44 years - Crude Prevalence
-dat_obe <- read.csv("CDI_Obesity.csv")|> filter(QuestionID == "NPAW2_3")
+dat_obe <- read.csv("CDI_Obesity.csv")|> filter(QuestionID == "NPAW2_3", StratificationID1 == "OVR")
 
-#High school completion among women aged 18-44 years: OVC2_2
-dat_highSch <- read.csv("CDI_Overarching.csv")|> filter(QuestionID == "OVC2_2")
 #Self-rated health status among women aged 18-44 years: OVC6_2
-dat_selfHlthSta <- read.csv("CDI_Overarching.csv")|> filter(QuestionID == "OVC6_2")
+dat_selfHlthSta <- read.csv("CDI_Overarching.csv")|> filter(QuestionID == "OVC6_2", StratificationID1 == "OVR")
 #Current health care coverage among women aged 18-44 years: OVC1_2
-dat_HlthCare <- read.csv("CDI_Overarching.csv")|> filter(QuestionID == "OVC1_2")
+dat_HlthCare <- read.csv("CDI_Overarching.csv")|> filter(QuestionID == "OVC1_2", StratificationID1 == "OVR")
+
+#merge asthma with the 7 covariate dataframes
+#function to drop unnecessary columns
+prep.CDI.merge <- function(x) {
+    x <- x[c("YearStart", "LocationAbbr", "TopicID","Question", "DataValueType", "DataValue", "DataValueAlt", "LowConfidenceLimit", "HighConfidenceLimit")]
+    return (x)}
+dat_smk <- prep.CDI.merge(dat_smk)
+colnames(dat_smk) <- c("YearStart", "LocationAbbr", "TopicID","TOBQuestion", "TOBDataValueType", "TOBDataValue", "TOBDataValueAlt", "TOBLowConfidenceLimit", "TOBHighConfidenceLimit")
+dat_heavyDrink <- prep.CDI.merge(dat_heavyDrink)
+colnames(dat_heavyDrink) <- c("YearStart", "LocationAbbr", "TopicID","AlcHeavyQuestion", "AlcHeavyDataValueType", "AlcHeavyDataValue", "AlcHeavyDataValueAlt", "AlcHeavyLowConfidenceLimit", "AlcHeavyHighConfidenceLimit")
+dat_bingeDrink <- prep.CDI.merge(dat_bingeDrink)
+colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "TopicID","AlcBingeQuestion", "AlcBingeDataValueType", "AlcBingeDataValue", "AlcBingeDataValueAlt", "AlcBingeLowConfidenceLimit", "AlcBingeHighConfidenceLimit")
+dat_obe <- prep.CDI.merge(dat_obe)
+colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "TopicID","ObeQuestion", "ObeDataValueType", "ObeDataValue", "ObeDataValueAlt", "ObeLowConfidenceLimit", "ObeHighConfidenceLimit")
+dat_selfHlthSta <- prep.CDI.merge(dat_selfHlthSta)
+colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "TopicID","selfHlthQuestion", "selfHlthDataValueType", "selfHlthDataValue", "selfHlthDataValueAlt", "selfHlthLowConfidenceLimit", "selfHlthHighConfidenceLimit")
+dat_HlthCare <- prep.CDI.merge(dat_HlthCare)
+colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "TopicID","HlthCareQuestion", "HlthCareDataValueType", "HlthCareDataValue", "HlthCareDataValueAlt", "HlthCareLowConfidenceLimit", "HlthCareHighConfidenceLimit")
+
+CDI_cov_list <- list(dat_asthma, dat_smk, dat_heavyDrink, dat_bingeDrink, dat_obe, dat_selfHlthSta, dat_HlthCare) 
+
+dat_mergeCDI <- CDI_cov_list %>% reduce(full_join, by = c("YearStart", "LocationAbbr"))
+#sort dataframe by year & drop colums with only NAs
+dat_mergeCDI <- dat_mergeCDI[order(dat_mergeCDI$YearStart, decreasing = FALSE),] |> select_if(~sum(!is.na(.)) > 0) |> filter(YearStart!="2020")
 ```
 
 
