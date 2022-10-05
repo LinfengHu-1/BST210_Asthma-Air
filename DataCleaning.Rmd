@@ -82,7 +82,7 @@ Clean Daily Summary data to obtain annual average by state from 2011 to 2019 (Oz
 #exposure variables defined as percentage of AQI days with co, no2, o3, pm2.5, pm10 as primary pollutants
 # naming pattern: Ozone (44201)	SO2 (42401)	CO (42101)	NO2 (42602) PM2.5 FRM/FEM Mass (88101)
 
-
+#Ozone unit: parts per million--------------------
 #read in daily summary file - O3
 file_o3 <- list.files(path = "./exposure_data", pattern="daily_44201", full.names =T)
 dat_o3_tibble <- lapply(file_o3, read.csv)
@@ -116,7 +116,9 @@ for (i in 1:length(dat_o3_tibble_mean)){
 dat_o3 <- rbindlist(dat_o3_tibble_mean, use.names = TRUE, fill = TRUE)
 
 
+#pm2.5 unit: microgram/cubic meter-----------------
 file_pm2.5 <- list.files(path = "./exposure_data", pattern="daily_88101", full.names =T)
+<<<<<<< HEAD
 ```
 
 ```{r}
@@ -161,3 +163,110 @@ unique(soecon$Location)
 ```
 
 unique(soecon$Location)
+=======
+
+dat_pm2.5_tibble <- lapply(file_pm2.5, read.csv)
+
+#read in files of land area of U.S. counties
+# LND110210D Land area in square miles 2010
+land_area <- readxl::read_xls("LND01.xls") %>% select(Areaname, STCOU, LND110210D) %>% 
+  mutate(State.Code = substr(STCOU, start = 1, stop = 2),
+         County.Code = substr(STCOU, start = 3, stop = 5)) %>% subset(County.Code != "000") %>% 
+  rename(land.area = LND110210D) %>% select(State.Code, County.Code, land.area)
+
+land_area$State.Code <-  gsub("(?<![0-9])0+", "", land_area$State.Code, perl = TRUE) %>% as.integer()
+land_area$County.Code <- gsub("(?<![0-9])0+", "", land_area$County.Code, perl = TRUE) %>% as.integer()
+
+
+#create function to find the annual average of pm2.5 exposure by state
+find.state.annual.pm2.5 <- function(x) {
+  annual.mean <- x %>% group_by(State.Code, County.Code) %>% mutate(pm2.5 = mean(Arithmetic.Mean)) %>% 
+    left_join(land_area, by = c("State.Code", "County.Code")) %>% ungroup() %>% 
+    group_by(State.Code) %>% summarise(pm2.5_mean = weighted.mean(pm2.5, land.area))
+
+  return(annual.mean)
+}
+
+dat_pm2.5_tibble_mean <- lapply(dat_pm2.5_tibble, find.state.annual.pm2.5)
+
+for (i in 1:length(dat_pm2.5_tibble_mean)){
+  dat_pm2.5_tibble_mean[[i]] <- dat_pm2.5_tibble_mean[[i]] %>% mutate(year = i + 2010)
+}
+
+dat_pm2.5 <- rbindlist(dat_pm2.5_tibble_mean, use.names = TRUE, fill = TRUE)
+
+#SO2 unit: parts per billion-----------------
+file_so2 <- list.files(path = "./exposure_data", pattern="daily_42401", full.names =T)
+
+dat_so2_tibble <- lapply(file_so2, read.csv)
+
+#create function to find the annual average of pm2.5 exposure by state
+find.state.annual.so2 <- function(x) {
+  annual.mean <- x %>% group_by(State.Code, County.Code) %>% mutate(so2 = mean(Arithmetic.Mean)) %>% 
+    left_join(land_area, by = c("State.Code", "County.Code")) %>% ungroup() %>% 
+    group_by(State.Code) %>% summarise(so2_mean = weighted.mean(so2, land.area))
+
+  return(annual.mean)
+}
+
+dat_so2_tibble_mean <- lapply(dat_so2_tibble, find.state.annual.so2)
+
+for (i in 1:length(dat_so2_tibble_mean)){
+  dat_so2_tibble_mean[[i]] <- dat_so2_tibble_mean[[i]] %>% mutate(year = i + 2010)
+}
+
+dat_so2 <- rbindlist(dat_so2_tibble_mean, use.names = TRUE, fill = TRUE)
+
+#CO unit: parts per million-----------------
+file_co <- list.files(path = "./exposure_data", pattern="daily_42101", full.names =T)
+
+dat_co_tibble <- lapply(file_co, read.csv)
+
+#create function to find the annual average of pm2.5 exposure by state
+find.state.annual.co <- function(x) {
+  annual.mean <- x %>% group_by(State.Code, County.Code) %>% mutate(co = mean(Arithmetic.Mean)) %>% 
+    left_join(land_area, by = c("State.Code", "County.Code")) %>% ungroup() %>% 
+    group_by(State.Code) %>% summarise(co_mean = weighted.mean(co, land.area))
+
+  return(annual.mean)
+}
+
+dat_co_tibble_mean <- lapply(dat_co_tibble, find.state.annual.co)
+
+for (i in 1:length(dat_co_tibble_mean)){
+  dat_co_tibble_mean[[i]] <- dat_co_tibble_mean[[i]] %>% mutate(year = i + 2010)
+}
+
+dat_co <- rbindlist(dat_co_tibble_mean, use.names = TRUE, fill = TRUE)
+
+
+
+
+
+#NO2 unit: parts per billion --------------------
+#read in daily summary file - no2
+file_no2 <- list.files(path = "./exposure_data", pattern="daily_42602", full.names =T)
+dat_no2_tibble <- lapply(file_no2, read.csv)
+
+#create function to find the annual average of ozone exposure by state
+find.state.annual.no2 <- function(x) {
+  annual.mean <- x %>% group_by(State.Code, County.Code) %>% mutate(no2 = mean(Arithmetic.Mean)) %>% 
+    left_join(land_area, by = c("State.Code", "County.Code")) %>% ungroup() %>% 
+    group_by(State.Code) %>% summarise(no2_mean = weighted.mean(no2, land.area))
+
+  return(annual.mean)
+}
+
+dat_no2_tibble_mean <- lapply(dat_no2_tibble, find.state.annual.no2)
+
+for (i in 1:length(dat_no2_tibble_mean)){
+  dat_no2_tibble_mean[[i]] <- dat_no2_tibble_mean[[i]] %>% mutate(year = i + 2010)
+}
+
+dat_no2 <- rbindlist(dat_no2_tibble_mean, use.names = TRUE, fill = TRUE)
+
+
+dat_exp <- dat_o3 %>% left_join(dat_pm2.5, by = c("State.Code","year")) %>% left_join(dat_so2, by = c("State.Code","year")) %>% 
+  left_join(dat_co, by = c("State.Code","year")) %>% left_join(dat_no2, by = c("State.Code","year"))
+````
+>>>>>>> f1660dd7bf8598f07b3730bb287bbe33ebfef021
