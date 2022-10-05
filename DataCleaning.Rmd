@@ -163,8 +163,8 @@ unique(soecon$Location)
 ```
 
 unique(soecon$Location)
-=======
 
+```{r}
 dat_pm2.5_tibble <- lapply(file_pm2.5, read.csv)
 
 #read in files of land area of U.S. counties
@@ -269,4 +269,3 @@ dat_no2 <- rbindlist(dat_no2_tibble_mean, use.names = TRUE, fill = TRUE)
 dat_exp <- dat_o3 %>% left_join(dat_pm2.5, by = c("State.Code","year")) %>% left_join(dat_so2, by = c("State.Code","year")) %>% 
   left_join(dat_co, by = c("State.Code","year")) %>% left_join(dat_no2, by = c("State.Code","year"))
 ````
->>>>>>> f1660dd7bf8598f07b3730bb287bbe33ebfef021
