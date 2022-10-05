@@ -10,20 +10,18 @@ library(tidyverse)
 library(gam)
 library(splines)
 library(splines2)  
-library("haven")
 library(dplyr)
 library(tidyr)
 library(broom)
-library(biglm)
 library(dslabs)
 library(ggplot2)
 library(ggthemes)
 library(ggrepel)
-dat_asthma = read.csv("CDI_Asthma.csv")
-dat_smk = read.csv("CDI_Tobacco.csv")
-dat_alc = read.csv("CDI_Alcohol.csv")
-dat_obe = read.csv("CDI_Obesity.csv")
-dat_prox = read.csv("CDI_Overarching.csv")
+#dat_asthma = read.csv("CDI_Asthma.csv")
+#dat_smk = read.csv("CDI_Tobacco.csv")
+#dat_alc = read.csv("CDI_Alcohol.csv")
+#dat_obe = read.csv("CDI_Obesity.csv")
+#dat_prox = read.csv("CDI_Overarching.csv")
 ```
 
 #### Choosing target group
@@ -31,9 +29,10 @@ Choose target group to be "women aged 18-44 years" for age and gender restricted
 Crude prevalence
 ```{r}
 #clean asthma data to restrict target group
-dat_asthma <- dat_asthma[dat_asthma$QuestionID == "AST1_2",]
+dat_asthma <- read.csv("CDI_Asthma.csv") |> filter(QuestionID=="AST1_2")
 #drop missing values for crude rate
-dat_asthma <- dat_asthma[complete.cases(dat_asthma[,c("DataValue")]),]
+#####dat_asthma <- drop_na(dat_asthma, DataValue)
+
 #sort dataframe by year
 dat_asthma <- dat_asthma[order(dat_asthma$YearStart, decreasing = FALSE),]
 ```
@@ -42,8 +41,7 @@ Tobacco data: Current cigarette smoking among women aged 18-44 years
 crude prevalence
 ```{r}
 #clean Tobacco data
-dat_smk <- dat_smk[dat_smk$QuestionID == "TOB1_3",]
-dat_smk <- dat_smk[complete.cases(dat_smk[,c("DataValue")]),]
+dat_smk <- read.csv("CDI_Tobacco.csv")|> filter(QuestionID == "TOB1_3")
 dat_smk <- dat_smk[order(dat_smk$YearStart, decreasing = FALSE),]
 ```
 
@@ -51,17 +49,16 @@ Alcohol data:
 Heavy drinking among women aged 18-44 years: QuestionID = ALC5_2
 Binge drinking prevalence among women aged 18-44 years: QuestionID = ALC2_3
 ```{r}
-dat_alc <- filter(dat_alc, dat_alc$QuestionID %in% c("ALC5_2", "ALC2_3"))
-dat_alc <- dat_alc[complete.cases(dat_alc[,c("DataValue")]),]
-dat_alc <- dat_alc[order(dat_alc$YearStart, decreasing = FALSE),]
+dat_heavyDrink <- read.csv("CDI_Alcohol.csv") |> filter(QuestionID == "ALC5_2")
+dat_bingeDrink <- read.csv("CDI_Alcohol.csv") |> filter(QuestionID == "ALC2_3")
+#####dat_alc <- dat_alc[order(dat_alc$YearStart, decreasing = FALSE),]
 ```
 
 Obesity data: Overweight or obesity among women aged 18-44 years
 Crude prevalence
 ```{r}
-dat_obe <- dat_obe[dat_obe$QuestionID == "NPAW2_3",]
-dat_obe <- dat_obe[complete.cases(dat_obe[,c("DataValue")]),]
-dat_obe <- dat_obe[order(dat_obe$YearStart, decreasing = FALSE),]
+dat_obe <- read.csv("CDI_Obesity.csv")|> filter(QuestionID == "NPAW2_3")
+#dat_obe <- dat_obe[order(dat_obe$YearStart, decreasing = FALSE),]
 ```
  
 Overarching data: 
@@ -69,9 +66,11 @@ High school completion among women aged 18-44 years: OVC2_2
 Self-rated health status among women aged 18-44 years: OVC6_2
 Current health care coverage among women aged 18-44 years: OVC1_2
 ```{r}
-dat_prox <- filter(dat_prox, dat_prox$QuestionID %in% c("OVC2_2", "OVC6_2","OVC1_2"))
-dat_prox <- dat_prox[complete.cases(dat_prox[,c("DataValue")]),]
-dat_prox <- dat_prox[order(dat_prox$YearStart, decreasing = FALSE),]
+#high school data no stratification
+dat_highSch <- read.csv("CDI_Overarching.csv")|> filter(QuestionID == "OVC2_2")
+dat_selfHlthSta <- read.csv("CDI_Overarching.csv")|> filter(QuestionID == "OVC6_2")
+dat_HlthCare <- read.csv("CDI_Overarching.csv")|> filter(QuestionID == "OVC1_2")
+#####dat_prox <- dat_prox[order(dat_prox$YearStart, decreasing = FALSE),]
 ```
 
 Clean Daily Summary data to obtain annual average by state from 2011 to 2019 (Ozone, SO2, CO, NO2)
