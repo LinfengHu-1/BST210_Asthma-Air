@@ -19,6 +19,7 @@ library(dslabs)
 library(ggplot2)
 library(ggthemes)
 library(ggrepel)
+library(data.table)
 dat_asthma = read.csv("CDI_Asthma.csv")
 dat_smk = read.csv("CDI_Tobacco.csv")
 dat_alc = read.csv("CDI_Alcohol.csv")
@@ -104,8 +105,13 @@ find.state.annual.o3 <- function(x) {
   return(annual.mean)
 }
 
-dat_o3 <- lapply(dat_o3_tibble, find.state.annual.o3)
+dat_o3_tibble_mean <- lapply(dat_o3_tibble, find.state.annual.o3)
 
+for (i in 1:length(dat_o3_tibble_mean)){
+  dat_o3_tibble_mean[[i]] <- dat_o3_tibble_mean[[i]] %>% mutate(year = i + 2010)
+}
+
+dat_o3 <- rbindlist(dat_o3_tibble_mean, use.names = TRUE, fill = TRUE)
 
 
 file_pm2.5 <- list.files(path = "./exposure_data", pattern="daily_88101", full.names =T)
