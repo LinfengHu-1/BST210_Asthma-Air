@@ -17,11 +17,6 @@ library(dslabs)
 library(ggplot2)
 library(ggthemes)
 library(ggrepel)
-#dat_asthma = read.csv("CDI_Asthma.csv")
-#dat_smk = read.csv("CDI_Tobacco.csv")
-#dat_alc = read.csv("CDI_Alcohol.csv")
-#dat_obe = read.csv("CDI_Obesity.csv")
-#dat_prox = read.csv("CDI_Overarching.csv")
 ```
 
 #### Choosing target group
