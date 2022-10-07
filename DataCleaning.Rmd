@@ -48,20 +48,20 @@ dat_HlthCare <- read.csv("CDI_Overarching.csv")|> filter(QuestionID == "OVC1_2",
 #merge asthma with the 7 covariate dataframes
 #function to drop unnecessary columns
 prep.CDI.merge <- function(x) {
-    x <- x[c("YearStart", "LocationAbbr", "TopicID","Question", "DataValueType", "DataValue", "DataValueAlt", "LowConfidenceLimit", "HighConfidenceLimit")]
+    x <- x[c("YearStart", "LocationAbbr", "DataValue", "LowConfidenceLimit", "HighConfidenceLimit")]
     return (x)}
 dat_smk <- prep.CDI.merge(dat_smk)
-colnames(dat_smk) <- c("YearStart", "LocationAbbr", "TopicID","TOBQuestion", "TOBDataValueType", "TOBDataValue", "TOBDataValueAlt", "TOBLowConfidenceLimit", "TOBHighConfidenceLimit")
+colnames(dat_smk) <- c("YearStart", "LocationAbbr", "TOBDataValue", "TOBLowConfidenceLimit", "TOBHighConfidenceLimit")
 dat_heavyDrink <- prep.CDI.merge(dat_heavyDrink)
-colnames(dat_heavyDrink) <- c("YearStart", "LocationAbbr", "TopicID","AlcHeavyQuestion", "AlcHeavyDataValueType", "AlcHeavyDataValue", "AlcHeavyDataValueAlt", "AlcHeavyLowConfidenceLimit", "AlcHeavyHighConfidenceLimit")
+colnames(dat_heavyDrink) <- c("YearStart", "LocationAbbr", "AlcHeavyDataValue", "AlcHeavyLowConfidenceLimit", "AlcHeavyHighConfidenceLimit")
 dat_bingeDrink <- prep.CDI.merge(dat_bingeDrink)
-colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "TopicID","AlcBingeQuestion", "AlcBingeDataValueType", "AlcBingeDataValue", "AlcBingeDataValueAlt", "AlcBingeLowConfidenceLimit", "AlcBingeHighConfidenceLimit")
+colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "AlcBingeDataValue",  "AlcBingeLowConfidenceLimit", "AlcBingeHighConfidenceLimit")
 dat_obe <- prep.CDI.merge(dat_obe)
-colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "TopicID","ObeQuestion", "ObeDataValueType", "ObeDataValue", "ObeDataValueAlt", "ObeLowConfidenceLimit", "ObeHighConfidenceLimit")
+colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "ObeDataValue", "ObeLowConfidenceLimit", "ObeHighConfidenceLimit")
 dat_selfHlthSta <- prep.CDI.merge(dat_selfHlthSta)
-colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "TopicID","selfHlthQuestion", "selfHlthDataValueType", "selfHlthDataValue", "selfHlthDataValueAlt", "selfHlthLowConfidenceLimit", "selfHlthHighConfidenceLimit")
+colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "selfHlthDataValue", "selfHlthLowConfidenceLimit", "selfHlthHighConfidenceLimit")
 dat_HlthCare <- prep.CDI.merge(dat_HlthCare)
-colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "TopicID","HlthCareQuestion", "HlthCareDataValueType", "HlthCareDataValue", "HlthCareDataValueAlt", "HlthCareLowConfidenceLimit", "HlthCareHighConfidenceLimit")
+colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "HlthCareDataValue",  "HlthCareLowConfidenceLimit", "HlthCareHighConfidenceLimit")
 
 CDI_cov_list <- list(dat_asthma, dat_smk, dat_heavyDrink, dat_bingeDrink, dat_obe, dat_selfHlthSta, dat_HlthCare) 
 
