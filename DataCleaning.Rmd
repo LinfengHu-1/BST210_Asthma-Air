@@ -17,18 +17,12 @@ library(dslabs)
 library(ggplot2)
 library(ggthemes)
 library(ggrepel)
-#<<<<<<< HEAD
 library(data.table)
-dat_asthma = read.csv("CDI_Asthma.csv")
-dat_smk = read.csv("CDI_Tobacco.csv")
-dat_alc = read.csv("CDI_Alcohol.csv")
-dat_obe = read.csv("CDI_Obesity.csv")
-dat_prox = read.csv("CDI_Overarching.csv")
-#--------------=======
-#>>>>>>> aac3615087f90365cebdcffeaa02ac77b7ef9bc9
 ```
 
-#### Clean CDI data from 2011-2020
+## Data Cleaning
+
+#### CDI data 
 Choose target group to be "women aged 18-44 years" for age and gender restricted data
 Crude prevalence
 ```{r}
@@ -54,20 +48,20 @@ dat_HlthCare <- read.csv("CDI_Overarching.csv")|> filter(QuestionID == "OVC1_2",
 #merge asthma with the 7 covariate dataframes
 #function to drop unnecessary columns
 prep.CDI.merge <- function(x) {
-    x <- x[c("YearStart", "LocationAbbr", "TopicID","Question", "DataValueType", "DataValue", "DataValueAlt", "LowConfidenceLimit", "HighConfidenceLimit")]
+    x <- x[c("YearStart", "LocationAbbr", "DataValue", "LowConfidenceLimit", "HighConfidenceLimit")]
     return (x)}
 dat_smk <- prep.CDI.merge(dat_smk)
-colnames(dat_smk) <- c("YearStart", "LocationAbbr", "TopicID","TOBQuestion", "TOBDataValueType", "TOBDataValue", "TOBDataValueAlt", "TOBLowConfidenceLimit", "TOBHighConfidenceLimit")
+colnames(dat_smk) <- c("YearStart", "LocationAbbr", "TOBDataValue", "TOBLowConfidenceLimit", "TOBHighConfidenceLimit")
 dat_heavyDrink <- prep.CDI.merge(dat_heavyDrink)
-colnames(dat_heavyDrink) <- c("YearStart", "LocationAbbr", "TopicID","AlcHeavyQuestion", "AlcHeavyDataValueType", "AlcHeavyDataValue", "AlcHeavyDataValueAlt", "AlcHeavyLowConfidenceLimit", "AlcHeavyHighConfidenceLimit")
+colnames(dat_heavyDrink) <- c("YearStart", "LocationAbbr", "AlcHeavyDataValue", "AlcHeavyLowConfidenceLimit", "AlcHeavyHighConfidenceLimit")
 dat_bingeDrink <- prep.CDI.merge(dat_bingeDrink)
-colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "TopicID","AlcBingeQuestion", "AlcBingeDataValueType", "AlcBingeDataValue", "AlcBingeDataValueAlt", "AlcBingeLowConfidenceLimit", "AlcBingeHighConfidenceLimit")
+colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "AlcBingeDataValue",  "AlcBingeLowConfidenceLimit", "AlcBingeHighConfidenceLimit")
 dat_obe <- prep.CDI.merge(dat_obe)
-colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "TopicID","ObeQuestion", "ObeDataValueType", "ObeDataValue", "ObeDataValueAlt", "ObeLowConfidenceLimit", "ObeHighConfidenceLimit")
+colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "ObeDataValue", "ObeLowConfidenceLimit", "ObeHighConfidenceLimit")
 dat_selfHlthSta <- prep.CDI.merge(dat_selfHlthSta)
-colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "TopicID","selfHlthQuestion", "selfHlthDataValueType", "selfHlthDataValue", "selfHlthDataValueAlt", "selfHlthLowConfidenceLimit", "selfHlthHighConfidenceLimit")
+colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "selfHlthDataValue", "selfHlthLowConfidenceLimit", "selfHlthHighConfidenceLimit")
 dat_HlthCare <- prep.CDI.merge(dat_HlthCare)
-colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "TopicID","HlthCareQuestion", "HlthCareDataValueType", "HlthCareDataValue", "HlthCareDataValueAlt", "HlthCareLowConfidenceLimit", "HlthCareHighConfidenceLimit")
+colnames(dat_bingeDrink) <- c("YearStart", "LocationAbbr", "HlthCareDataValue",  "HlthCareLowConfidenceLimit", "HlthCareHighConfidenceLimit")
 
 CDI_cov_list <- list(dat_asthma, dat_smk, dat_heavyDrink, dat_bingeDrink, dat_obe, dat_selfHlthSta, dat_HlthCare) 
 
@@ -77,7 +71,7 @@ dat_mergeCDI <- dat_mergeCDI[order(dat_mergeCDI$YearStart, decreasing = FALSE),]
 ```
 
 
-
+#### Air pollutant data
 Clean Daily Summary data to obtain annual average by state from 2011 to 2019 (Ozone, SO2, CO, NO2)
 ```{r}
 #exposure variables defined as percentage of AQI days with co, no2, o3, pm2.5, pm10 as primary pollutants
@@ -119,6 +113,7 @@ dat_o3 <- rbindlist(dat_o3_tibble_mean, use.names = TRUE, fill = TRUE)
 
 #pm2.5 unit: microgram/cubic meter-----------------
 file_pm2.5 <- list.files(path = "./exposure_data", pattern="daily_88101", full.names =T)
+<<<<<<< HEAD
 
 ```
 
@@ -166,6 +161,8 @@ unique(soecon$Location)
 
 
 ```{r}
+=======
+>>>>>>> 6ffb85e8ec729f8bbaaf1dae96dbcffd0615ca39
 dat_pm2.5_tibble <- lapply(file_pm2.5, read.csv)
 
 #read in files of land area of U.S. counties
@@ -241,9 +238,6 @@ for (i in 1:length(dat_co_tibble_mean)){
 dat_co <- rbindlist(dat_co_tibble_mean, use.names = TRUE, fill = TRUE)
 
 
-
-
-
 #NO2 unit: parts per billion --------------------
 #read in daily summary file - no2
 file_no2 <- list.files(path = "./exposure_data", pattern="daily_42602", full.names =T)
@@ -270,11 +264,67 @@ dat_no2 <- rbindlist(dat_no2_tibble_mean, use.names = TRUE, fill = TRUE)
 dat_exp <- dat_o3 %>% left_join(dat_pm2.5, by = c("State.Code","year")) %>% left_join(dat_so2, by = c("State.Code","year")) %>% 
   left_join(dat_co, by = c("State.Code","year")) %>% left_join(dat_no2, by = c("State.Code","year"))
 
+<<<<<<< HEAD
+=======
+st_crosswalk <- unique(dat_o3_tibble[[1]][,c('State.Code','State.Name')])
+
+dat_exp <- dat_exp %>% filter(year != 2020) %>% left_join(st_crosswalk, by = c("State.Code"))
+
+
+```
+
+#### Socioeconomic data
+
+```{r}
+# data cleaning for socio economic factors
+homeless <-  read_csv('homelessness.csv') 
+snap<- read_csv('SNAPenrollment.csv')
+unrate <- read_csv('unemploymentrate.csv')
+poverty <- read.csv('poverty_gender.csv')
+
+```
+
+```{r}
+states_vector <- c(unique(homeless$Location), unique(poverty$Location), unique(snap$Location), unique(unrate$State))
+states_vector
+
+unique_states <- intersect(unique(homeless$Location), unique(poverty$Location))
+unique_states<- intersect(unique_states, unique(snap$Location))
+unique_states <- intersect(unique_states, unique(unrate$State))
+
+>>>>>>> 6ffb85e8ec729f8bbaaf1dae96dbcffd0615ca39
 ```
 
 
 
 ```{r}
+<<<<<<< HEAD
 
 ```
 
+=======
+names(unrate)[names(unrate) == 'State'] <- 'Location'
+```
+
+
+```{r}
+one<-merge(homeless, unrate, by = c('Location', 'year'))
+two <- merge(snap, one, by= c('Location', 'year'))
+soecon <- merge(two, poverty, by = c('Location', 'year'))
+names(soecon)[names(soecon) == 'Individuals'] <- 'individual_homeless'
+names(soecon)[names(soecon) == 'Total People Experiencing Homelessness'] <- 'total_homeless'
+names(soecon)[names(soecon) == 'People in Families with Children'] <- 'fam_homeless'
+
+```
+
+
+```{r}
+unique(soecon$Location)
+```
+```{r}
+dat_full <- dat_mergeCDI %>% left_join(soecon, by = c("LocationDesc" = "Location", "YearStart" = "year")) %>% 
+  left_join(dat_exp, by = c("LocationID" = "State.Code", "YearStart" = "year"))
+
+find.na <- dat_full %>% select(LocationDesc, State.Name) %>% unique()
+```
+>>>>>>> 6ffb85e8ec729f8bbaaf1dae96dbcffd0615ca39
