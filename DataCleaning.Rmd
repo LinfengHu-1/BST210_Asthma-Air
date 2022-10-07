@@ -119,7 +119,7 @@ dat_o3 <- rbindlist(dat_o3_tibble_mean, use.names = TRUE, fill = TRUE)
 
 #pm2.5 unit: microgram/cubic meter-----------------
 file_pm2.5 <- list.files(path = "./exposure_data", pattern="daily_88101", full.names =T)
-<<<<<<< HEAD
+
 ```
 
 ```{r}
@@ -163,7 +163,7 @@ names(soecon)[names(soecon) == 'People in Families with Children'] <- 'fam_homel
 unique(soecon$Location)
 ```
 
-unique(soecon$Location)
+
 
 ```{r}
 dat_pm2.5_tibble <- lapply(file_pm2.5, read.csv)
@@ -269,4 +269,12 @@ dat_no2 <- rbindlist(dat_no2_tibble_mean, use.names = TRUE, fill = TRUE)
 
 dat_exp <- dat_o3 %>% left_join(dat_pm2.5, by = c("State.Code","year")) %>% left_join(dat_so2, by = c("State.Code","year")) %>% 
   left_join(dat_co, by = c("State.Code","year")) %>% left_join(dat_no2, by = c("State.Code","year"))
-````
+
+```
+
+
+
+```{r}
+
+```
+
